@@ -1,0 +1,79 @@
+#!/usr/bin/env bash
+#
+# Author:
+#   mmtrt [Taqi Raza]
+#
+# Description:
+#   download and prepare winsnap for snap
+#
+# Date: Nov 29 2018
+#
+
+dlwsp () {
+    ver=$(wget https://www.ntwind.com/software/winsnap.html -q -O - 2>&1 | grep WinSnap_ | sed 's|_| |g;s|-| |g;2d' | awk '{print $5}')
+    wget https://www.ntwind.com/files/WinSnap_${ver}-setup.exe &> /dev/null
+}
+
+dli7z16 () {
+    ARCHITECTURE=$(dpkg --print-architecture)
+    if [ "${ARCHITECTURE}" = "amd64" ]; then
+    debs="https://launchpad.net/ubuntu/+source/p7zip/16.02+dfsg-4/+build/13091326/+files/p7zip_16.02+dfsg-4_amd64.deb https://launchpad.net/ubuntu/+source/p7zip/16.02+dfsg-4/+build/13091326/+files/p7zip-full_16.02+dfsg-4_amd64.deb"
+    debsi="p7zip_16.02+dfsg-4_amd64.deb p7zip-full_16.02+dfsg-4_amd64.deb"
+    elif [ "${ARCHITECTURE}" = "i386" ]; then
+    debs="https://launchpad.net/ubuntu/+source/p7zip/16.02+dfsg-4/+build/13091329/+files/p7zip_16.02+dfsg-4_i386.deb https://launchpad.net/ubuntu/+source/p7zip/16.02+dfsg-4/+build/13091329/+files/p7zip-full_16.02+dfsg-4_i386.deb"
+    debsi="p7zip_16.02+dfsg-4_i386.deb p7zip-full_16.02+dfsg-4_i386.deb"
+    else
+     echo "ERROR! No amd64 or i386 system found. Failing the build here."
+     exit 1
+    fi
+
+    for dldebs in $debs
+    do
+    wget $dldebs &> /dev/null
+    done
+
+    for pkgdebins in $debsi
+    do
+    sudo apt install ./$pkgdebins -y &> /dev/null
+    rm $pkgdebins
+    done
+}
+
+mkwsp () {
+    mkdir ./{wine-platform,bin} && mkdir -p usr/share/{pixmaps,applications}
+    if [ "${ARCHITECTURE}" = "amd64" ]; then
+     7z x "WinSnap*.exe" -x'!$PLUGINSDIR' -x'!$TEMP' -x'!History.rtf' -x'!License.rtf' -x'!uninst.exe' -x'!WinSnap.exe' -x'!winsnap.html' -o"usr/share/winsnap" &> /dev/null
+     mv usr/share/winsnap/WinSnap64.exe usr/share/winsnap/winsnap.exe
+    elif [ "${ARCHITECTURE}" = "i386" ]; then
+     7z x "WinSnap*.exe" -x'!$PLUGINSDIR' -x'!$TEMP' -x'!History.rtf' -x'!License.rtf' -x'!uninst.exe' -x'!WinSnap64.exe' -x'!winsnap.html' -o"usr/share/winsnap" &> /dev/null
+     mv usr/share/winsnap/WinSnap.exe usr/share/winsnap/winsnap.exe
+    else
+     echo "ERROR! winsnap only produces software for amd64 and i386. Failing the build here."
+     exit 1
+    fi
+    find "usr" -type d -execdir chmod 755 {} +
+}
+
+mkdsk () {
+cat > winsnap.desktop <<'EOF1'
+[Desktop Entry]
+Name=WinSnap
+GenericName=Screenshot Capture Utility
+Encoding=UTF-8
+Version=
+Type=Application
+Terminal=false
+Icon=${SNAP}/usr/share/pixmaps/winsnap.png
+Exec=winsnap %F
+StartupWMClass=winsnap.exe
+Categories=Utility;
+MimeType=
+EOF1
+sed -i -e 's|Version=|Version='"$ver"'|g' winsnap.desktop
+}
+
+dlwsp
+dli7z16
+mkdsk
+mkwsp
+mv winsnap bin && mv winsnap.desktop usr/share/applications && mv winsnap.png usr/share/pixmaps && cp -R -p {bin,usr,wine-platform} $SNAPCRAFT_PART_INSTALL

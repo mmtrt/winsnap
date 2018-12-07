@@ -1,0 +1,42 @@
+name: winsnap
+version: latest
+version-script: cat $SNAPCRAFT_STAGE/version
+summary: winsnap is fast & user-friendly utility for taking and editing screenshots.
+description: |
+ Screenshots and Feature Highlights
+  WinSnap 5 contains a number of innovative features that enable far superior screenshots and even easier working methods. Redesigned and updated user interface comes in 3 different styles (Light, Dark and System) and significantly improves the overall usability.
+
+confinement: strict
+grade: stable
+architectures:
+  - build-on: amd64
+  - build-on: i386
+
+plugs:
+  wine-platform-plug:
+    content: wine-base-stable
+    interface: content
+    target: $SNAP/wine-platform
+    default-provider: wine-platform
+
+apps:
+  winsnap:
+    command: winsnap
+    desktop: usr/share/applications/winsnap.desktop
+    plugs: [ wayland, x11, opengl, home, desktop, desktop-legacy, network, hardware-observe, process-control, cups-control, removable-media, wine-platform-plug ]
+
+parts:
+  winsnap:
+    plugin: nil
+    source: ./src
+    override-build: |
+      snapcraftctl build
+      set -ex
+      ver=$(wget https://www.ntwind.com/software/winsnap.html -q -O - 2>&1 | grep WinSnap_ | sed 's|_| |g;s|-| |g;2d' | awk '{print $5}')
+      echo $ver > $SNAPCRAFT_STAGE/version
+      ./dl_wsp
+    stage:
+      - bin
+      - usr
+      - wine-platform
+    build-packages: [wget]
