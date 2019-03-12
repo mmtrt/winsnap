@@ -11,6 +11,7 @@ grade: stable
 architectures:
   - build-on: amd64
   - build-on: i386
+base: core18
 
 plugs:
   wine-platform-plug:
