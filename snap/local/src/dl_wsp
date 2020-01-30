@@ -46,7 +46,7 @@ mkwsp () {
      mv usr/share/winsnap/WinSnap.exe usr/share/winsnap/winsnap.exe
     elif [ "${ARCHITECTURE}" = "i386" ]; then
      7z x "WinSnap*.exe" -x'!$PLUGINSDIR' -x'!$TEMP' -x'!History.rtf' -x'!License.rtf' -x'!uninst.exe' -x'!winsnap.html' -o"usr/share/winsnap" -aou &> /dev/null
-     rm WinSnap.exe
+     rm usr/share/winsnap/WinSnap.exe
      mv usr/share/winsnap/WinSnap_1.exe usr/share/winsnap/winsnap.exe
     else
      echo "ERROR! winsnap only produces software for amd64 and i386. Failing the build here."
