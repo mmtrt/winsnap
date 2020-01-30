@@ -42,7 +42,8 @@ dli7z16 () {
 mkwsp () {
     mkdir ./{wine-runtime,wine-platform,bin} && mkdir -p usr/share/{pixmaps,applications}
     if [ "${ARCHITECTURE}" = "amd64" ]; then
-     7z x "WinSnap*.exe" -x'!$PLUGINSDIR' -x'!$TEMP' -x'!History.rtf' -x'!License.rtf' -x'!uninst.exe' -x'!winsnap.html' -o"usr/share/winsnap" &> /dev/null
+     7z x "WinSnap*.exe" -x'!$PLUGINSDIR' -x'!$TEMP' -x'!History.rtf' -x'!License.rtf' -x'!uninst.exe' -x'!winsnap.html' -o"usr/share/winsnap" -aou &> /dev/null
+     rm usr/share/winsnap/WinSnap_1.exe
      mv usr/share/winsnap/WinSnap.exe usr/share/winsnap/winsnap.exe
     elif [ "${ARCHITECTURE}" = "i386" ]; then
      7z x "WinSnap*.exe" -x'!$PLUGINSDIR' -x'!$TEMP' -x'!History.rtf' -x'!License.rtf' -x'!uninst.exe' -x'!winsnap.html' -o"usr/share/winsnap" -aou &> /dev/null
