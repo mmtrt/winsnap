@@ -42,11 +42,12 @@ dli7z16 () {
 mkwsp () {
     mkdir ./{wine-runtime,wine-platform,bin} && mkdir -p usr/share/{pixmaps,applications}
     if [ "${ARCHITECTURE}" = "amd64" ]; then
-     7z x "WinSnap*.exe" -x'!$PLUGINSDIR' -x'!$TEMP' -x'!History.rtf' -x'!License.rtf' -x'!uninst.exe' -x'!WinSnap.exe' -x'!winsnap.html' -o"usr/share/winsnap" &> /dev/null
-     mv usr/share/winsnap/WinSnap64.exe usr/share/winsnap/winsnap.exe
-    elif [ "${ARCHITECTURE}" = "i386" ]; then
-     7z x "WinSnap*.exe" -x'!$PLUGINSDIR' -x'!$TEMP' -x'!History.rtf' -x'!License.rtf' -x'!uninst.exe' -x'!WinSnap64.exe' -x'!winsnap.html' -o"usr/share/winsnap" &> /dev/null
+     7z x "WinSnap*.exe" -x'!$PLUGINSDIR' -x'!$TEMP' -x'!History.rtf' -x'!License.rtf' -x'!uninst.exe' -x'!winsnap.html' -o"usr/share/winsnap" &> /dev/null
      mv usr/share/winsnap/WinSnap.exe usr/share/winsnap/winsnap.exe
+    elif [ "${ARCHITECTURE}" = "i386" ]; then
+     7z x "WinSnap*.exe" -x'!$PLUGINSDIR' -x'!$TEMP' -x'!History.rtf' -x'!License.rtf' -x'!uninst.exe' -x'!winsnap.html' -o"usr/share/winsnap" -aou &> /dev/null
+     rm WinSnap.exe
+     mv usr/share/winsnap/WinSnap_1.exe usr/share/winsnap/winsnap.exe
     else
      echo "ERROR! winsnap only produces software for amd64 and i386. Failing the build here."
      exit 1
