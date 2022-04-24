@@ -40,7 +40,7 @@ dli7z16 () {
 }
 
 mkwsp () {
-    mkdir ./{wine-runtime,wine-platform,bin} && mkdir -p usr/share/{pixmaps,applications}
+    mkdir ./{wine-runtime,wine-platform,bin} && mkdir -p sommelier/hooks && mkdir -p usr/share/{pixmaps,applications}
     if [ "${ARCHITECTURE}" = "amd64" ]; then
      7z x "WinSnap*.exe" -x'!$PLUGINSDIR' -x'!$TEMP' -x'!History.rtf' -x'!License.rtf' -x'!uninst.exe' -x'!winsnap.html' -o"usr/share/winsnap" -aou &> /dev/null
      rm usr/share/winsnap/WinSnap_1.exe
@@ -78,4 +78,4 @@ dlwsp
 dli7z16
 mkdsk
 mkwsp
-mv winsnap bin && mv winsnap.desktop usr/share/applications && mv winsnap.png usr/share/pixmaps && cp -R -p {bin,usr,wine-runtime,wine-platform} $SNAPCRAFT_PART_INSTALL
+mv pre-install sommelier/hooks && mv winsnap.desktop usr/share/applications && mv winsnap.png usr/share/pixmaps && cp -R -p {sommelier,bin,usr,wine-runtime,wine-platform} $SNAPCRAFT_PART_INSTALL
