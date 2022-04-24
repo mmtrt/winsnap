@@ -4,6 +4,7 @@ summary: winsnap is fast & user-friendly utility for taking and editing screensh
 description: |
  Screenshots and Feature Highlights
   WinSnap 5 contains a number of innovative features that enable far superior screenshots and even easier working methods. Redesigned and updated user interface comes in 3 different styles (Light, Dark and System) and significantly improves the overall usability.
+adopt-info: winsnap
 
 confinement: strict
 grade: stable
